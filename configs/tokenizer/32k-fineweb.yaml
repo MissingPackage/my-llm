@@ -1,0 +1,15 @@
+output_dir: artifacts/tokenizer-32k
+vocab_size: 32000
+min_frequency: 2
+max_documents: 500000
+model_max_length: 2048
+seed: 42
+shuffle_buffer: 10000
+sources:
+  - path: HuggingFaceFW/fineweb-edu
+    name: sample-10BT
+    split: train
+    text_column: text
+    weight: 1.0
+
+

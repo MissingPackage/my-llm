@@ -1,0 +1,37 @@
+# Smoke bilingue del reasoning SFT (bilingual-reasoning, fase 3): due sorgenti
+# locali IT/EN pesate via mixing.py e reasoning_lang: auto, che seleziona il
+# system prompt per lingua della domanda.  La proporzione IT/EN è la coppia di
+# pesi qui sotto (clausola E4): cambiarla è una modifica di config, non di
+# codice.  Parametri CPU speculari a sft-identity-smoke.yaml; eval assente di
+# proposito (sources+eval_split resta strutturalmente escluso, come là).
+method: reasoning_sft
+model_path: artifacts/pretrain-debug/final
+output_dir: artifacts/reasoning-bilingual-debug
+seed: 42
+dataset:
+  format: gsm8k
+  reasoning_lang: auto
+  sources:
+    - path: json
+      data_files: sample_data/reasoning.jsonl
+      split: train
+      weight: 1.0
+    - path: json
+      data_files: sample_data/reasoning-it.jsonl
+      split: train
+      weight: 1.0
+  max_samples: 16
+training:
+  max_length: 256
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 5.0e-5
+  num_train_epochs: 1.0
+  warmup_ratio: 0.1
+  weight_decay: 0.0
+  logging_steps: 1
+  eval_steps: 100
+  save_steps: 100
+  save_total_limit: 1
+  assistant_only_loss: true

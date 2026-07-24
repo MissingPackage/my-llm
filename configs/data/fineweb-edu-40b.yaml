@@ -1,0 +1,22 @@
+# EXPERIMENTAL: the compute-optimal-scale corpus for the 2.027B model.
+# At uint16 this is about 74.5 GiB before filesystem/cache overhead.
+tokenizer_path: artifacts/tokenizer-32k
+output_dir: data/processed/fineweb-edu-40b
+dtype: uint16
+# 250M tokens ~= 477 MiB/shard: large enough for sequential IO, small enough to move.
+shard_tokens: 250000000
+target_train_tokens: 40000000000
+target_validation_tokens: 50000000
+validation_fraction: 0.00125
+max_documents: null
+seed: 42
+shuffle_buffer: 50000
+tokenize_batch_size: 128
+sources:
+  - path: HuggingFaceFW/fineweb-edu
+    # The larger sample is required; sample-10BT cannot supply a 40B-token target.
+    name: sample-100BT
+    split: train
+    text_column: text
+    weight: 1.0
+

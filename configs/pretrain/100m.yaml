@@ -1,0 +1,47 @@
+name: my-llm-100m
+seed: 42
+tokenizer_path: artifacts/tokenizer-32k
+train_manifest: data/processed/fineweb-edu-2b/train-manifest.json
+validation_manifest: data/processed/fineweb-edu-2b/validation-manifest.json
+output_dir: artifacts/pretrain-100m
+log_dir: runs/pretrain-100m
+model:
+  hidden_size: 768
+  intermediate_size: 2048
+  num_hidden_layers: 12
+  num_attention_heads: 12
+  num_key_value_heads: 4
+  max_position_embeddings: 1024
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-5
+  tie_word_embeddings: true
+training:
+  sequence_length: 1024
+  micro_batch_size: 4
+  gradient_accumulation_steps: 16
+  max_steps: 30518
+  learning_rate: 0.0006
+  min_lr_ratio: 0.1
+  warmup_steps: 500
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  precision: bf16
+  # Retain FP32 weights/master precision where memory is not the bottleneck.
+  parameter_dtype: fp32
+  gradient_checkpointing: true
+  attention_backend: sdpa
+  optimizer: adamw_fused
+  compile: false
+  compile_mode: reduce-overhead
+  prefetch_batches: 1
+  save_optimizer_state: true
+  max_shard_size: 2GB
+  empty_cache_every: 0
+  log_every: 10
+  eval_every: 250
+  eval_batches: 20
+  save_every: 500
+  keep_last_checkpoints: 3
+

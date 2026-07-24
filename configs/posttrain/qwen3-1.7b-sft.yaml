@@ -1,0 +1,72 @@
+# Stage 1: turn the text-only Qwen3 base into an instruction-following adapter.
+method: sft
+model_path: Qwen/Qwen3-1.7B-Base
+output_dir: artifacts/qwen3-1.7b-sft
+seed: 42
+dataset:
+  path: HuggingFaceH4/ultrachat_200k
+  split: train_sft
+  eval_split: test_sft
+  # Ultrachat carries a stray `prompt` column that silently switches TRL to
+  # prompt/completion mode; pin the schema to the conversational column.
+  columns: [messages]
+  # Start here on a laptop; scale only after comparing a held-out evaluation.
+  max_samples: 30000
+  max_eval_samples: 500
+peft:
+  enabled: true
+  # Canonical QLoRA: NF4 frozen weights, nested quantization and BF16 compute.
+  quantization: nf4
+  double_quant: true
+  compute_dtype: bf16
+  # Rank 64 across every linear projection is a quality-oriented 2B compromise.
+  lora_r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules: all-linear
+  use_rslora: true
+  use_dora: false
+  # One-step LoftQ initializes LoRA to compensate for base quantization error.
+  loftq: true
+  ephemeral_gpu_offload: false
+training:
+  max_length: 2048
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.0001
+  num_train_epochs: 1.0
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  max_grad_norm: 1.0
+  lr_scheduler_type: cosine
+  optim: paged_adamw_8bit
+  gradient_checkpointing: true
+  # Hub FlashAttention avoids local flash-attn compilation/version mismatches.
+  attention_backend: kernels-community/flash-attn2
+  # BFD packing forces padding-free FlashAttention and minimizes padding waste.
+  packing: true
+  packing_strategy: bfd
+  padding_free: true
+  eval_packing: false
+  pad_to_multiple_of: 8
+  assistant_only_loss: true
+  eos_token: <|im_end|>
+  # Liger fuses RoPE/RMSNorm/SwiGLU/CE; use ordinary NLL, not chunked NLL.
+  use_liger_kernel: true
+  loss_type: nll
+  # Offload is an OOM escape hatch; false is substantially faster when 2B fits.
+  activation_offloading: false
+  neftune_noise_alpha: null
+  torch_compile: false
+  torch_compile_mode: reduce-overhead
+  torch_empty_cache_steps: 50
+  dataloader_num_workers: 2
+  dataloader_prefetch_factor: 2
+  logging_steps: 5
+  eval_steps: 200
+  save_steps: 200
+  save_total_limit: 2
+

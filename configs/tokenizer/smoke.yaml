@@ -1,0 +1,15 @@
+output_dir: artifacts/tokenizer-smoke
+vocab_size: 512
+min_frequency: 2
+max_documents: 1000
+# Leave room for the verbose didactic reasoning system prompt plus generation.
+model_max_length: 256
+seed: 42
+shuffle_buffer: 100
+sources:
+  - path: json
+    data_files: sample_data/pretrain.jsonl
+    split: train
+    text_column: text
+    weight: 1.0
+

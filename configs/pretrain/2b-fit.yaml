@@ -1,0 +1,57 @@
+# MEMORY FIT CHECK ONLY. Two updates cannot create a useful language model.
+# It proves that weights, gradients, activations and paged optimizer state coexist.
+name: my-llm-2b-fit-only
+seed: 42
+tokenizer_path: artifacts/tokenizer-32k
+train_manifest: data/processed/fineweb-edu-2b/train-manifest.json
+validation_manifest: data/processed/fineweb-edu-2b/validation-manifest.json
+output_dir: artifacts/pretrain-2b-fit
+log_dir: runs/pretrain-2b-fit
+model:
+  # This shape is 2,027,174,400 parameters with a tied 32K-token vocabulary.
+  hidden_size: 2560
+  intermediate_size: 6912
+  num_hidden_layers: 28
+  num_attention_heads: 20
+  num_key_value_heads: 5
+  max_position_embeddings: 2048
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-5
+  tie_word_embeddings: true
+training:
+  # Sequence length, not accumulated batch size, drives activation VRAM.
+  sequence_length: 512
+  micro_batch_size: 1
+  gradient_accumulation_steps: 1
+  max_steps: 2
+  learning_rate: 0.00025
+  min_lr_ratio: 0.1
+  warmup_steps: 1
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  precision: bf16
+  # BF16 *stored parameters* are a fit compromise; FP32 weights alone need ~7.55 GiB.
+  parameter_dtype: bf16
+  gradient_checkpointing: true
+  # PyTorch SDPA selects an eligible flash kernel on the RTX 4090 Mobile.
+  attention_backend: sdpa
+  # 8-bit moments plus paging are what make this a plausible 16 GiB fit check.
+  optimizer: paged_adamw_8bit
+  optimizer_min_8bit_size: 4096
+  optimizer_percentile_clipping: 100
+  # Compile is tested separately: its startup/graph memory obscures a pure fit test.
+  compile: false
+  compile_mode: reduce-overhead
+  prefetch_batches: 1
+  # Avoid a duplicate ~4 GiB checkpoint; the final safetensors are enough to prove fit.
+  save_checkpoints: false
+  save_optimizer_state: false
+  max_shard_size: 2GB
+  empty_cache_every: 0
+  log_every: 1
+  eval_every: 2
+  eval_batches: 1
+  save_every: 100
+  keep_last_checkpoints: 1

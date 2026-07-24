@@ -1,0 +1,18 @@
+tokenizer_path: artifacts/tokenizer-smoke
+output_dir: data/processed/smoke
+dtype: uint16
+shard_tokens: 50000
+target_train_tokens: 20000
+target_validation_tokens: 4000
+validation_fraction: 0.2
+max_documents: 1000
+seed: 42
+shuffle_buffer: 100
+sources:
+  - path: json
+    data_files: sample_data/pretrain.jsonl
+    split: train
+    text_column: text
+    weight: 1.0
+
+

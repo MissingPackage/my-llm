@@ -1,0 +1,46 @@
+name: my-llm-debug
+seed: 42
+tokenizer_path: artifacts/tokenizer-smoke
+train_manifest: data/processed/smoke/train-manifest.json
+validation_manifest: data/processed/smoke/validation-manifest.json
+output_dir: artifacts/pretrain-debug
+log_dir: runs/pretrain-debug
+model:
+  hidden_size: 128
+  intermediate_size: 384
+  num_hidden_layers: 4
+  num_attention_heads: 4
+  num_key_value_heads: 2
+  # Training windows stay 128, while post-training smoke generation may reach 256.
+  max_position_embeddings: 256
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-5
+  tie_word_embeddings: true
+training:
+  sequence_length: 128
+  micro_batch_size: 4
+  gradient_accumulation_steps: 1
+  max_steps: 20
+  learning_rate: 0.001
+  min_lr_ratio: 0.1
+  warmup_steps: 2
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  precision: fp32
+  parameter_dtype: fp32
+  gradient_checkpointing: false
+  attention_backend: sdpa
+  optimizer: adamw_fused
+  compile: false
+  compile_mode: default
+  prefetch_batches: 0
+  save_optimizer_state: true
+  max_shard_size: 2GB
+  empty_cache_every: 0
+  log_every: 1
+  eval_every: 10
+  eval_batches: 2
+  save_every: 10
+  keep_last_checkpoints: 2

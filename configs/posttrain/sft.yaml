@@ -1,0 +1,26 @@
+method: sft
+model_path: artifacts/pretrain-100m/final
+output_dir: artifacts/sft
+seed: 42
+dataset:
+  path: HuggingFaceH4/ultrachat_200k
+  split: train_sft
+  eval_split: test_sft
+  max_samples: 50000
+  max_eval_samples: 1000
+training:
+  max_length: 1024
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 32
+  learning_rate: 5.0e-5
+  num_train_epochs: 1.0
+  warmup_ratio: 0.03
+  weight_decay: 0.1
+  logging_steps: 10
+  eval_steps: 250
+  save_steps: 250
+  save_total_limit: 2
+  assistant_only_loss: true
+
+

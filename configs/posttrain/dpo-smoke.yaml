@@ -1,0 +1,27 @@
+method: dpo
+model_path: artifacts/sft-debug/final
+output_dir: artifacts/dpo-debug
+seed: 42
+dataset:
+  path: json
+  data_files: sample_data/preferences.jsonl
+  split: train
+  eval_split: train
+  max_samples: 4
+  max_eval_samples: 2
+training:
+  max_length: 128
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-6
+  num_train_epochs: 1.0
+  warmup_ratio: 0.1
+  weight_decay: 0.0
+  beta: 0.1
+  logging_steps: 1
+  eval_steps: 2
+  save_steps: 4
+  save_total_limit: 1
+
+

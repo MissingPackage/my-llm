@@ -1,0 +1,25 @@
+{"id":"doc-001","text":"Language models learn statistical regularities by predicting the next token in a sequence. A small model is useful for experiments because every stage can be inspected, repeated, and measured."}
+{"id":"doc-002","text":"The scientific method starts with a question, continues with a falsifiable hypothesis, and uses observations to update confidence. Reproducibility requires preserving data provenance, code, configuration, and random seeds."}
+{"id":"doc-003","text":"A transformer represents tokens as vectors. Self-attention lets each position combine information from earlier positions, while a causal mask prevents access to future tokens during autoregressive training."}
+{"id":"doc-004","text":"Gradient descent changes parameters in the direction that reduces a loss function. Adam keeps moving averages of gradients and squared gradients, which improves optimization but consumes additional memory."}
+{"id":"doc-005","text":"In astronomy, a light-year is a unit of distance rather than time. It is the distance light travels through vacuum in one Julian year, approximately 9.46 trillion kilometres."}
+{"id":"doc-006","text":"Photosynthesis converts light energy into chemical energy. Plants use carbon dioxide and water to produce carbohydrates, releasing oxygen as a consequence of the light-dependent reactions."}
+{"id":"doc-007","text":"A prime number has exactly two positive divisors: one and itself. Euclid showed that there are infinitely many primes by considering a number formed from the product of known primes plus one."}
+{"id":"doc-008","text":"La gravità è l'interazione che attrae i corpi dotati di massa ed energia. Sulla superficie terrestre l'accelerazione gravitazionale è circa 9,81 metri al secondo quadrato."}
+{"id":"doc-009","text":"Un esperimento ben progettato distingue la correlazione dalla causalità. Randomizzazione, gruppi di controllo e analisi preregistrate riducono molte fonti di distorsione."}
+{"id":"doc-010","text":"Il machine learning non trasforma automaticamente dati rumorosi in conoscenza. La qualità del campionamento, le etichette, le metriche e la validazione determinano ciò che un modello può imparare."}
+{"id":"doc-011","text":"Water freezes at zero degrees Celsius under standard pressure, but the exact phase boundary changes with pressure. Scientific statements should name the conditions under which they hold."}
+{"id":"doc-012","text":"A computer program is a precise sequence of instructions. Tests provide executable examples of expected behaviour and make refactoring safer when they cover meaningful boundaries and failure modes."}
+{"id":"doc-013","text":"Entropy can describe the number of microscopic arrangements compatible with a macroscopic state. In information theory it also quantifies uncertainty in a probability distribution."}
+{"id":"doc-014","text":"Neurons communicate through electrical and chemical signals. An action potential travels along an axon and can trigger neurotransmitter release at a synapse."}
+{"id":"doc-015","text":"The derivative measures local rate of change. The integral accumulates infinitesimal contributions, and the fundamental theorem of calculus connects these two operations."}
+{"id":"doc-016","text":"Una rete neurale generalizza quando mantiene buone prestazioni su esempi non usati per aggiornare i pesi. Memorizzare il training set non basta a dimostrare apprendimento utile."}
+{"id":"doc-017","text":"Earth orbits the Sun on an ellipse with small eccentricity. Seasons are caused mainly by the tilt of Earth's rotational axis, not by large changes in distance from the Sun."}
+{"id":"doc-018","text":"A database transaction is commonly described by atomicity, consistency, isolation, and durability. These properties clarify what should happen when operations overlap or a system fails."}
+{"id":"doc-019","text":"The speed of an algorithm is often expressed as a growth rate. Big-O notation suppresses constant factors to show how resource use changes as the input becomes larger."}
+{"id":"doc-020","text":"Un modello linguistico genera distribuzioni di probabilità, non certificati di verità. Le risposte devono essere valutate con benchmark appropriati e controlli indipendenti."}
+{"id":"doc-021","text":"Sound is a mechanical wave and needs a medium in which to propagate. In dry air near room temperature, its speed is roughly 343 metres per second."}
+{"id":"doc-022","text":"The immune system combines rapid innate responses with adaptive responses that can develop specificity and memory. Its components interact rather than acting as a single central controller."}
+{"id":"doc-023","text":"Version control records a graph of changes. A commit should describe one coherent state, and a branch provides a movable name for a line of development."}
+{"id":"doc-024","text":"Nel ragionamento matematico, una risposta corretta non garantisce che ogni passaggio sia valido. Per questo è utile separare verifica del risultato e valutazione della spiegazione."}
+

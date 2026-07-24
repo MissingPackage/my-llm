@@ -1,0 +1,46 @@
+name: my-llm-350m
+seed: 42
+tokenizer_path: artifacts/tokenizer-32k
+train_manifest: data/processed/fineweb-edu-7b/train-manifest.json
+validation_manifest: data/processed/fineweb-edu-7b/validation-manifest.json
+output_dir: artifacts/pretrain-350m
+log_dir: runs/pretrain-350m
+model:
+  hidden_size: 1024
+  intermediate_size: 2816
+  num_hidden_layers: 28
+  num_attention_heads: 16
+  num_key_value_heads: 4
+  max_position_embeddings: 1024
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-5
+  tie_word_embeddings: true
+training:
+  sequence_length: 1024
+  micro_batch_size: 1
+  gradient_accumulation_steps: 64
+  max_steps: 106812
+  learning_rate: 0.0003
+  min_lr_ratio: 0.1
+  warmup_steps: 1000
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  grad_clip: 1.0
+  precision: bf16
+  parameter_dtype: fp32
+  gradient_checkpointing: true
+  attention_backend: sdpa
+  optimizer: adamw_fused
+  compile: false
+  compile_mode: reduce-overhead
+  prefetch_batches: 1
+  save_optimizer_state: true
+  max_shard_size: 2GB
+  empty_cache_every: 0
+  log_every: 10
+  eval_every: 500
+  eval_batches: 20
+  save_every: 1000
+  keep_last_checkpoints: 2
+

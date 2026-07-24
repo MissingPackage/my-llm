@@ -1,0 +1,67 @@
+# Stage 3: supervised reasoning cold start. Merge the DPO adapter before this stage.
+method: reasoning_sft
+model_path: artifacts/qwen3-1.7b-dpo-merged
+output_dir: artifacts/qwen3-1.7b-reasoning-sft
+seed: 42
+dataset:
+  path: open-r1/OpenR1-Math-220k
+  name: default
+  split: train
+  format: openr1_math
+  # A deterministic local split prevents evaluating on examples used for updates.
+  eval_fraction: 0.01
+  max_samples: 20000
+  max_eval_samples: 250
+  # Proxy filter: retain traces likely to fit after chat-template tokenization.
+  max_characters: 12000
+peft:
+  enabled: true
+  quantization: nf4
+  double_quant: true
+  compute_dtype: bf16
+  lora_r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules: all-linear
+  use_rslora: true
+  use_dora: false
+  loftq: true
+  ephemeral_gpu_offload: false
+training:
+  max_length: 4096
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00005
+  num_train_epochs: 1.0
+  warmup_ratio: 0.03
+  weight_decay: 0.01
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  max_grad_norm: 1.0
+  lr_scheduler_type: cosine
+  optim: paged_adamw_8bit
+  gradient_checkpointing: true
+  attention_backend: kernels-community/flash-attn2
+  packing: true
+  packing_strategy: bfd
+  padding_free: true
+  eval_packing: false
+  pad_to_multiple_of: 8
+  assistant_only_loss: true
+  eos_token: <|im_end|>
+  use_liger_kernel: true
+  loss_type: nll
+  # Set true only if 4K still OOMs after closing desktop GPU consumers.
+  activation_offloading: false
+  neftune_noise_alpha: null
+  torch_compile: false
+  torch_compile_mode: reduce-overhead
+  torch_empty_cache_steps: 25
+  dataloader_num_workers: 2
+  dataloader_prefetch_factor: 2
+  logging_steps: 5
+  eval_steps: 200
+  save_steps: 200
+  save_total_limit: 2
+

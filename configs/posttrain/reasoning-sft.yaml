@@ -1,0 +1,27 @@
+method: reasoning_sft
+model_path: artifacts/dpo/final
+output_dir: artifacts/reasoning-sft
+seed: 42
+dataset:
+  path: openai/gsm8k
+  name: main
+  split: train
+  eval_split: test
+  max_samples: null
+  max_eval_samples: 500
+training:
+  max_length: 1024
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 16
+  learning_rate: 2.0e-5
+  num_train_epochs: 2.0
+  warmup_ratio: 0.05
+  weight_decay: 0.05
+  logging_steps: 10
+  eval_steps: 250
+  save_steps: 250
+  save_total_limit: 2
+  assistant_only_loss: true
+
+

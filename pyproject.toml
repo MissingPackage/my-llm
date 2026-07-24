@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "my-llm"
+version = "0.2.0"
+description = "Didactic single-GPU LLM pretraining plus QLoRA reasoning and alignment on 16 GiB."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "numpy>=2.0,<3",
+  "pydantic>=2.10,<3",
+  "pyyaml>=6.0,<7",
+]
+
+[project.optional-dependencies]
+train = [
+  "accelerate>=1.12,<2",
+  "bitsandbytes>=0.49.2,<0.50",
+  "datasets>=4.5,<5",
+  "peft>=0.19.1,<0.20",
+  "safetensors>=0.7,<1",
+  "tensorboard>=2.20,<3",
+  "tokenizers>=0.22,<0.23",
+  # 2.12 is the newest torch any flash-attn build covers (Hub has
+  # torch212-cxx11-cu130); 2.13 would force SDPA and give up packing.
+  "torch>=2.12,<2.13",
+  "transformers>=5.13,<5.14",
+  "trl>=1.8,<1.9",
+]
+# Optional Triton/Hub kernels are isolated because they need a working CUDA stack.
+# The practical Qwen configs enable them; SDPA remains a packaging-safe fallback.
+fast = [
+  # transformers 5.13/5.14 (and main) require this exact runtime range;
+  # kernels 0.16 is rejected at import time by the hub-kernels integration.
+  "kernels>=0.15.2,<0.16",
+  "liger-kernel>=0.8,<0.9",
+]
+dev = [
+  "pytest>=9,<10",
+  "pytest-cov>=7,<8",
+  "ruff>=0.14,<0.15",
+]
+
+[project.scripts]
+llm-doctor = "my_llm.hardware:main"
+llm-estimate = "my_llm.estimate:main"
+llm-tokenizer = "my_llm.tokenizer:main"
+llm-prepare = "my_llm.prepare:main"
+llm-pretrain = "my_llm.pretrain:main"
+llm-posttrain = "my_llm.posttrain:main"
+llm-grpo = "my_llm.grpo:main"
+llm-merge-adapter = "my_llm.merge_adapter:main"
+llm-eval-gsm8k = "my_llm.evaluate:main"
+llm-benchmark-freeze = "my_llm.benchmark_freeze:main"
+llm-eval-personal = "my_llm.evaluate_personal:main"
+llm-genpairs = "my_llm.genpairs:main"
+llm-judge-pairs = "my_llm.judge_pairs:main"
+llm-chat = "my_llm.chat:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/my_llm"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+markers = ["training: requires the optional training stack"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]
+

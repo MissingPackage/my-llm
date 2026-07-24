@@ -1,0 +1,28 @@
+# Phase-4 smoke of the constitutional DPO chain: consumes the judge-pairs
+# output (unreviewed smoke material, decision C4) to prove DPOTrainer accepts the
+# format end to end. Conceptual clone of dpo-smoke.yaml, CPU-sized.
+method: dpo
+model_path: artifacts/sft-debug/final
+output_dir: artifacts/dpo-constitutional-debug
+seed: 42
+dataset:
+  path: json
+  data_files: data/preferences/constitutional-smoke.jsonl
+  split: train
+  eval_split: train
+  max_samples: 64
+  max_eval_samples: 2
+training:
+  max_length: 128
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 1.0e-6
+  num_train_epochs: 1.0
+  warmup_ratio: 0.1
+  weight_decay: 0.0
+  beta: 0.1
+  logging_steps: 8
+  eval_steps: 16
+  save_steps: 32
+  save_total_limit: 1

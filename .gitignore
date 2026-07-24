@@ -1,0 +1,36 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+.DS_Store
+
+# Local training data, caches, logs, and model weights
+data/processed/
+artifacts/
+runs/
+checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+*.npz
+*.gguf
+wandb/
+
+# Secrets and local environment
+.env
+.env.*
+*.key
+*.pem
+
+# Editor/agent scratch
+.harness/
+.omc/
+.serena/
+

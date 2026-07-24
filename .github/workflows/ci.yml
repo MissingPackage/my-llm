@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # CI intentionally avoids multi-GiB CUDA wheels and model downloads.  The core
+  # suite validates every YAML/formula/parser; local smoke targets exercise training.
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - run: uv lock --check
+      - run: uv sync --extra dev --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest
+      - run: uv run python -m compileall -q src tests

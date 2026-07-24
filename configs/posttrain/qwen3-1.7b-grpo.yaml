@@ -1,0 +1,61 @@
+# Stage 4: online exact-reward reasoning. Merge Stage 3 before starting GRPO.
+model_path: artifacts/qwen3-1.7b-reasoning-sft-merged
+output_dir: artifacts/qwen3-1.7b-grpo
+seed: 42
+dataset:
+  path: openai/gsm8k
+  name: main
+  split: train
+  max_samples: null
+peft:
+  enabled: true
+  quantization: nf4
+  double_quant: true
+  compute_dtype: bf16
+  # GRPO generation dominates memory; rank 32 is sufficient for the online delta.
+  lora_r: 32
+  lora_alpha: 64
+  lora_dropout: 0.0
+  target_modules: all-linear
+  use_rslora: true
+  use_dora: false
+  loftq: true
+  ephemeral_gpu_offload: false
+training:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 16
+  learning_rate: 0.00001
+  max_steps: 500
+  warmup_ratio: 0.05
+  weight_decay: 0.0
+  adam_beta1: 0.9
+  adam_beta2: 0.95
+  max_grad_norm: 1.0
+  lr_scheduler_type: cosine
+  optim: paged_adamw_8bit
+  gradient_checkpointing: true
+  attention_backend: kernels-community/flash-attn2
+  use_liger_kernel: true
+  num_generations: 4
+  generation_batch_size: 4
+  max_completion_length: 384
+  temperature: 0.9
+  # Zero avoids loading a second 1.7B reference; clipping still limits updates.
+  beta: 0.0
+  loss_type: dapo
+  mask_truncated_completions: true
+  # Continuous batching helps most at N>=32; N=4 is the laptop-safe generation group.
+  use_transformers_continuous_batching: false
+  continuous_batching_cuda_graph: false
+  continuous_batching_max_memory_percent: 0.35
+  # Keep all tokens by default; 0.2 is an experimental high-entropy-token ablation.
+  top_entropy_quantile: 1.0
+  torch_compile: false
+  torch_compile_mode: reduce-overhead
+  torch_empty_cache_steps: 25
+  dataloader_num_workers: 0
+  logging_steps: 2
+  save_steps: 50
+  save_total_limit: 2
+  # Correct answer dominates; format is only a weak shaping signal.
+  reward_weights: [1.0, 0.1]

@@ -1,0 +1,61 @@
+# Stage 2: preference alignment. First merge Stage 1 as documented in POSTTRAIN_2B.
+method: dpo
+model_path: artifacts/qwen3-1.7b-sft-merged
+output_dir: artifacts/qwen3-1.7b-dpo
+seed: 42
+dataset:
+  path: HuggingFaceH4/ultrafeedback_binarized
+  split: train_prefs
+  eval_split: test_prefs
+  max_samples: 30000
+  max_eval_samples: 500
+peft:
+  enabled: true
+  quantization: nf4
+  double_quant: true
+  compute_dtype: bf16
+  lora_r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules: all-linear
+  use_rslora: true
+  use_dora: false
+  loftq: true
+  ephemeral_gpu_offload: false
+training:
+  max_length: 1024
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 16
+  # Adapter DPO uses a higher LR than full-model DPO; monitor reward margins.
+  learning_rate: 0.00001
+  num_train_epochs: 1.0
+  warmup_ratio: 0.05
+  weight_decay: 0.0
+  beta: 0.1
+  loss_type: sigmoid
+  label_smoothing: 0.0
+  use_weighting: false
+  lr_scheduler_type: cosine
+  optim: paged_adamw_8bit
+  gradient_checkpointing: true
+  attention_backend: kernels-community/flash-attn2
+  # TRL 1.8 currently disables DPO padding-free internally after a refactor.
+  padding_free: false
+  pad_to_multiple_of: 8
+  # TRL clones only the small initial adapter as `ref`, then caches its log-probs;
+  # the 1.7B quantized base is shared rather than duplicated.
+  precompute_ref_log_probs: true
+  precompute_ref_batch_size: 1
+  # Liger and precomputed reference log-probabilities are not compatible in TRL 1.8.
+  use_liger_kernel: false
+  activation_offloading: false
+  torch_compile: false
+  torch_compile_mode: reduce-overhead
+  torch_empty_cache_steps: 50
+  dataloader_num_workers: 2
+  dataloader_prefetch_factor: 2
+  logging_steps: 5
+  eval_steps: 200
+  save_steps: 200
+  save_total_limit: 2

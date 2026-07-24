@@ -1,0 +1,36 @@
+# Smoke del mixing identity: due sorgenti locali pesate, CPU-capable.
+# eval assente di proposito: sources+eval_split è strutturalmente escluso
+# (l'eval usa il percorso a sorgente singola); l'eval reale arriva col profilo
+# Qwen in fase 4, dopo la scelta della persona (decision B2).
+method: sft
+model_path: artifacts/pretrain-debug/final
+output_dir: artifacts/sft-identity-debug
+seed: 42
+dataset:
+  sources:
+    - path: json
+      data_files: sample_data/sft.jsonl
+      split: train
+      weight: 1.0
+    - path: json
+      data_files: data/identity/persona-v1-draft.jsonl
+      split: train
+      weight: 3.0
+      # A small deterministic slice keeps the smoke run fast; the ratio still
+      # exercises oversampling of the identity source against the tiny corpus.
+      max_samples: 24
+  max_samples: 24
+training:
+  max_length: 128
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  learning_rate: 5.0e-5
+  num_train_epochs: 1.0
+  warmup_ratio: 0.1
+  weight_decay: 0.0
+  logging_steps: 1
+  eval_steps: 100
+  save_steps: 100
+  save_total_limit: 1
+  assistant_only_loss: true

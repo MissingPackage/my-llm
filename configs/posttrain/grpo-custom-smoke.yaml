@@ -1,0 +1,32 @@
+# CPU smoke for YAML-selected GRPO rewards (grpo-rewards, phase 2): same debug model
+# and minimal parameters as grpo-smoke.yaml, but rewards come from the `rewards` list
+# (no `reward_weights`: with a rewards list each entry carries its own weight).
+model_path: artifacts/dpo-debug/final
+output_dir: artifacts/grpo-custom-debug
+seed: 42
+dataset:
+  path: json
+  data_files: sample_data/reasoning.jsonl
+  split: train
+  max_samples: 2
+training:
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 2
+  learning_rate: 5.0e-6
+  max_steps: 1
+  warmup_ratio: 0.0
+  weight_decay: 0.0
+  num_generations: 2
+  generation_batch_size: 2
+  max_completion_length: 16
+  temperature: 1.0
+  beta: 0.0
+  loss_type: dapo
+  logging_steps: 1
+  save_steps: 1
+  save_total_limit: 1
+  rewards:
+    - {name: exact_answer, weight: 1.0}
+    - {name: format, weight: 0.1}
+    - {name: verification_step, weight: 0.15}
+    - {name: concise_answer, weight: 0.1}

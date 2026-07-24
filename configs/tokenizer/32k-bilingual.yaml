@@ -1,0 +1,20 @@
+output_dir: artifacts/tokenizer-32k-bilingual
+vocab_size: 32000
+min_frequency: 2
+max_documents: 600000
+model_max_length: 2048
+seed: 42
+shuffle_buffer: 10000
+sources:
+  - path: HuggingFaceFW/fineweb-edu
+    name: sample-10BT
+    split: train
+    text_column: text
+    weight: 0.8
+  - path: HuggingFaceFW/fineweb-2
+    name: ita_Latn
+    split: train
+    text_column: text
+    weight: 0.2
+
+
